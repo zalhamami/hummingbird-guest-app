@@ -84,22 +84,28 @@ class _GuestListState extends State<GuestList> {
   }
 
   Widget _buildAppBar() {
-    return HummingbirdAppBar(
-      context,
-      _buildTitle(),
+    return AppBar(
+      centerTitle: true,
+      shadowColor: HummingbirdColor.transparent,
+      backgroundColor: HummingbirdColor.black,
       leading: _buildBackButton(),
-      title: _isSearching ? _buildSearchField() : null,
+      title: _isSearching ? _buildSearchField() : _buildTitle(),
       actions: _buildActions(),
     );
   }
 
-  String _buildTitle() {
+  Widget _buildTitle() {
     var _title = 'Daftar Tamu';
 
     if (widget.filter != null && widget.filter.queryContainKey(_filterNameKey))
       _title = widget.filter.getQuery(_filterNameKey);
 
-    return _title;
+    return Text(
+      _title,
+      style: TextStyle(
+        color: HummingbirdColor.orange,
+      ),
+    );
   }
 
   Widget _buildBackButton() {
