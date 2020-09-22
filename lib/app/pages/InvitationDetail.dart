@@ -1,0 +1,208 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:hummingbird_guest_apps/app/models/Wedding.dart';
+import 'package:hummingbird_guest_apps/app/models/WeddingStatistic.dart';
+import 'package:hummingbird_guest_apps/app/pages/PhotoViewer.dart';
+import 'package:hummingbird_guest_apps/app/services/Service.dart';
+import 'package:hummingbird_guest_apps/app/ui-items/HummingbirdAppBar.dart';
+import 'package:hummingbird_guest_apps/app/ui-items/HummingbirdColor.dart';
+
+class InvitationDetail extends StatefulWidget {
+  final Wedding wedding;
+
+  const InvitationDetail({
+    Key key,
+    this.wedding,
+  }) : super(key: key);
+
+  @override
+  _InvitationDetailState createState() => _InvitationDetailState();
+}
+
+class _InvitationDetailState extends State<InvitationDetail> {
+  Future<WeddingStatistic> _statistic;
+
+  @override
+  void initState() {
+    _statistic = Service.getStatistic(widget.wedding);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        appBar: HummingbirdAppBar(context, 'Detail Undangan'),
+        body: NotificationListener<OverscrollIndicatorNotification>(
+          onNotification: (overScroll) {
+            overScroll.disallowGlow();
+            return;
+          },
+          child: DefaultTextStyle(
+            style: TextStyle(
+              color: HummingbirdColor.white,
+            ),
+            textAlign: TextAlign.center,
+            child: Center(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                shrinkWrap: true,
+                children: <Widget>[
+                  ..._buildBridegroomHeader(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 25.0),
+                  ),
+                  Center(
+                    child: FutureBuilder<WeddingStatistic>(
+                      future: _statistic,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) Text('Failed to load data.');
+
+                        if (snapshot.hasData) {
+                          var _list = [];
+
+                          final statistic = snapshot.data;
+
+                          _list = <BridegroomDetailItem>[
+                            BridegroomDetailItem(
+                              'Total Tamu',
+                              '${statistic.allGuests}',
+                            ),
+                            BridegroomDetailItem(
+                              'Total Tamu Datang',
+                              '${statistic.attendedGuests}',
+                            ),
+                            BridegroomDetailItem(
+                              'Total Tamu Belum Datang',
+                              '${statistic.scannedGuests}',
+                            ),
+                          ];
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: _list
+                                .map((item) => Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildBridegroomDetail(item),
+                                        ),
+                                      ],
+                                    ))
+                                .toList(),
+                          );
+                        }
+
+                        return CircularProgressIndicator();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBridegroomDetail(BridegroomDetailItem item) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: 25.0,
+      ),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            width: .5,
+            color: HummingbirdColor.grey,
+          ),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            item.title,
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 5.0,
+            ),
+          ),
+          Text(
+            '${item.description ?? '0'} orang',
+          ),
+        ],
+      ),
+    );
+  }
+
+  final double _featureImageSize = 120.0;
+
+  List<Widget> _buildBridegroomHeader() {
+    return <Widget>[
+      GestureDetector(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => PhotoViewer(
+                photos: [widget.wedding.featureImage],
+                heroKey: widget.wedding.heroKey,
+              ),
+            ),
+          );
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Hero(
+              tag: widget.wedding.heroKey,
+              child: Container(
+                width: _featureImageSize,
+                height: _featureImageSize,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: widget.wedding.featureImage.provider,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(60.0)),
+                  color: Colors.redAccent,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 8.0,
+        ),
+      ),
+      Text(
+        widget.wedding.featureTitle,
+        style: TextStyle(
+          fontSize: 18.0,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+      ),
+      Text('Wedding Code: ${widget.wedding.code}'),
+    ];
+  }
+}
+
+class BridegroomDetailItem {
+  final String title;
+  final String description;
+
+  BridegroomDetailItem(
+    this.title,
+    this.description,
+  );
+}
