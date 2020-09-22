@@ -4,14 +4,11 @@ import 'package:hummingbird_guest_apps/app/ui-items/HummingbirdColor.dart';
 class HummingbirdAppBar extends AppBar {
   final String label;
   final List<Widget> actions;
-  final Widget leading, title;
 
   HummingbirdAppBar(
     BuildContext context,
     this.label, {
     this.actions,
-    this.leading,
-    this.title,
   }) : super(
           actions: actions,
           toolbarHeight: 100.0,
@@ -26,13 +23,11 @@ class HummingbirdAppBar extends AppBar {
             ),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          title: title != null
-              ? title
-              : Text(
-                  label,
-                  style: TextStyle(
-                    color: HummingbirdColor.orange,
-                  ),
-                ),
+          title: Text(
+            label,
+            style: TextStyle(
+              color: HummingbirdColor.orange,
+            ),
+          ),
         );
 }
