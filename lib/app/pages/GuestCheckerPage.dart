@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:hummingbird_guest_apps/app/models/Contact.dart';
 import 'package:hummingbird_guest_apps/app/models/Guest.dart';
+import 'package:hummingbird_guest_apps/app/models/Photo.dart';
 import 'package:hummingbird_guest_apps/app/models/Wedding.dart';
 import 'package:hummingbird_guest_apps/app/pages/GuestList.dart';
 import 'package:hummingbird_guest_apps/app/pages/GuestVerified.dart';
@@ -12,6 +12,7 @@ import 'package:hummingbird_guest_apps/app/pages/MainPage.dart';
 import 'package:hummingbird_guest_apps/app/pages/PhotoViewer.dart';
 import 'package:hummingbird_guest_apps/app/services/Service.dart';
 import 'package:hummingbird_guest_apps/app/ui-items/HummingbirdColor.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -29,12 +30,20 @@ class GuestCheckerPage extends StatefulWidget {
 
 class _GuestCheckerPageState extends State<GuestCheckerPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _qrKey = GlobalKey(debugLabel: 'QR');
+  QRViewController qrController;
 
   void _openEndDrawer() {
     _scaffoldKey.currentState.openEndDrawer();
   }
 
   final _menuItems = <MenuItem>[];
+
+  @override
+  void dispose() {
+    qrController?.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -145,6 +154,8 @@ class _GuestCheckerPageState extends State<GuestCheckerPage> {
     super.initState();
   }
 
+  var _qrFlashOn = false;
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -169,6 +180,7 @@ class _GuestCheckerPageState extends State<GuestCheckerPage> {
                   Padding(padding: const EdgeInsets.symmetric(vertical: 35.0)),
                   ..._buildTitle(),
                   _buildScanQR(),
+                  _buildAdditionalButton(),
                 ],
               ),
             ),
@@ -181,93 +193,84 @@ class _GuestCheckerPageState extends State<GuestCheckerPage> {
   final _qrSize = 300.0;
 
   Widget _buildScanQR() {
-    return GestureDetector(
-      onTap: _doScan,
-      child: Container(
-        height: _qrSize,
-        width: _qrSize,
-        margin: const EdgeInsets.only(top: 45.0),
-        decoration: BoxDecoration(
-          color: HummingbirdColor.white,
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        child: Center(
-          child: Text(
-            'QR Scanner',
-            style: TextStyle(
-              color: HummingbirdColor.grey,
+    return Container(
+      height: _qrSize,
+      width: _qrSize,
+      margin: const EdgeInsets.symmetric(vertical: 45.0),
+      child: Center(
+        child: Stack(
+          children: <Widget>[
+            QRView(
+              key: _qrKey,
+              onQRViewCreated: (controller) {
+                setState(() => this.qrController = controller);
+                qrController.scannedDataStream.listen((value) {
+                  _doScan(value);
+                });
+              },
             ),
-          ),
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  height: _qrSize / 1.5,
+                  width: _qrSize / 1.5,
+                  decoration: BoxDecoration(
+                    color: HummingbirdColor.transparent,
+                    image: DecorationImage(
+                      image: Photo(
+                        path: 'assets/images/corner-border.png',
+                        type: PhotoType.Asset,
+                      ).provider,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );
   }
 
-  final _unknownErrorMessage = 'Unknown Error';
-
-  Future<void> _doScan() async {
-    ScanResult result;
-    Guest guest;
-
-    try {
-      result = await BarcodeScanner.scan();
-    } catch (e) {
-      result = ScanResult(
-        type: ResultType.Error,
-        format: BarcodeFormat.unknown,
-      );
-
-      var errorContent = '';
-      if (e.code == BarcodeScanner.cameraAccessDenied)
-        errorContent = 'The user did not grant the camera permission!';
-      else
-        errorContent = '$_unknownErrorMessage: $e';
-
-      result.rawContent = errorContent;
-    }
-
-    if (result == null || result.type == ResultType.Cancelled) return;
-
-    if (result.type == ResultType.Error) {
-      showDialog(
-        context: context,
-        builder: (_) => SimpleDialog(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Icon(
-                Icons.error_outline,
-                color: Colors.red,
-                size: 52.0,
-              ),
-            ),
-            Text(
-              result.rawContent == null || result.rawContent.isEmpty
-                  ? _unknownErrorMessage
-                  : result.rawContent,
-              style: TextStyle(
-                color: HummingbirdColor.black,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+  Widget _buildAdditionalButton() {
+    return Center(
+      child: IconButton(
+        icon: Icon(
+          _qrFlashOn ? Icons.flash_on : Icons.flash_off,
+          size: 28.0,
+          color: HummingbirdColor.white,
         ),
-      );
+        onPressed: () {
+          if (qrController != null) {
+            qrController.toggleFlash();
+            setState(() => _qrFlashOn = !_qrFlashOn);
+          }
+        },
+      ),
+    );
+  }
 
+  Future<void> _doScan(String barcode) async {
+    if (barcode == null || barcode.isEmpty || !barcode.contains('wedding_code'))
       return;
-    }
 
+    qrController?.pauseCamera();
+
+    Guest guest;
     try {
-      guest = await Service.scanQR(json.decode(result.rawContent));
+      guest = await Service.scanQR(json.decode(barcode));
     } catch (_) {}
 
-    Navigator.of(context).push(
+    await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => GuestVerified(
           guest: guest,
         ),
       ),
     );
+
+    qrController?.resumeCamera();
   }
 
   Widget _buildDrawer() {
