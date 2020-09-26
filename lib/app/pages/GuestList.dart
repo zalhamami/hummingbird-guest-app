@@ -246,11 +246,12 @@ class _GuestListState extends State<GuestList> {
                     color: HummingbirdColor.orange,
                   ),
                 ),
-                if (guest.description != null)
+                if (guest.category?.name != null &&
+                    guest.category.name.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 5.0),
                     child: Text(
-                      guest.description,
+                      guest.category.name,
                     ),
                   ),
               ],
