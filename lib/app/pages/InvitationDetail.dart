@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hummingbird_guest_apps/app/models/Wedding.dart';
 import 'package:hummingbird_guest_apps/app/models/WeddingStatistic.dart';
+import 'package:hummingbird_guest_apps/app/pages/GuestList.dart';
 import 'package:hummingbird_guest_apps/app/pages/PhotoViewer.dart';
 import 'package:hummingbird_guest_apps/app/services/Service.dart';
 import 'package:hummingbird_guest_apps/app/ui-items/HummingbirdAppBar.dart';
@@ -59,7 +60,7 @@ class _InvitationDetailState extends State<InvitationDetail> {
                         if (snapshot.hasError) Text('Failed to load data.');
 
                         if (snapshot.hasData) {
-                          var _list = [];
+                          var _list = <BridegroomDetailItem>[];
 
                           final statistic = snapshot.data;
 
@@ -67,6 +68,7 @@ class _InvitationDetailState extends State<InvitationDetail> {
                             BridegroomDetailItem(
                               'Total Tamu',
                               '${statistic.allGuests}',
+                              page: GuestList(wedding: widget.wedding),
                             ),
                             BridegroomDetailItem(
                               'Total Tamu Datang',
@@ -74,7 +76,7 @@ class _InvitationDetailState extends State<InvitationDetail> {
                             ),
                             BridegroomDetailItem(
                               'Total Tamu Belum Datang',
-                              '${statistic.scannedGuests}',
+                              '${statistic.notYetPresentGuests}',
                             ),
                           ];
 
@@ -106,7 +108,7 @@ class _InvitationDetailState extends State<InvitationDetail> {
   }
 
   Widget _buildBridegroomDetail(BridegroomDetailItem item) {
-    return Container(
+    Widget widget = Container(
       padding: const EdgeInsets.symmetric(
         vertical: 25.0,
       ),
@@ -139,6 +141,18 @@ class _InvitationDetailState extends State<InvitationDetail> {
         ],
       ),
     );
+
+    if (item.page != null)
+      widget = GestureDetector(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => item.page,
+          ),
+        ),
+        child: widget,
+      );
+
+    return widget;
   }
 
   final double _featureImageSize = 120.0;
@@ -200,9 +214,11 @@ class _InvitationDetailState extends State<InvitationDetail> {
 class BridegroomDetailItem {
   final String title;
   final String description;
+  final Widget page;
 
   BridegroomDetailItem(
     this.title,
-    this.description,
-  );
+    this.description, {
+    this.page,
+  });
 }
