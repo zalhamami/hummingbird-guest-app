@@ -9,7 +9,21 @@ class Wedding {
 
   bool hasAttendance = false;
 
-  String get featureTitle => '$groom & $bride';
+  String get featureTitle {
+    String _groom, _bride = '';
+
+    _groom = getFirstName(groom);
+    _bride = getFirstName(bride);
+
+    return '$_groom & $_bride';
+  }
+
+  static String getFirstName(String value) {
+    value = value.trim();
+    final List<String> names = value.split(" ");
+
+    return names.first;
+  }
 
   String get heroKey => 'WEDDING-$id';
 
