@@ -106,7 +106,7 @@ class GuestVerified extends StatelessWidget {
       Padding(
         padding: const EdgeInsets.only(bottom: 35.0),
         child: Icon(
-          IconData(
+          const IconData(
             0xe801,
             fontFamily: 'HummingbirdIcon',
           ),
@@ -129,7 +129,7 @@ class GuestVerified extends StatelessWidget {
       ),
       Padding(padding: const EdgeInsets.symmetric(vertical: 35.0)),
       _buildResultItem('Nama Lengkap', guest.name),
-      _buildResultItem('Katrgori', guest.category?.name ?? '-'),
+      _buildResultItem('Kategori', guest.category?.name ?? '-'),
       _buildResultItem('Deskripsi', guest.description),
       Padding(padding: const EdgeInsets.only(bottom: 25.0)),
     ];
