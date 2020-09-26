@@ -26,12 +26,33 @@ class _MainState extends State<Main> {
   void initState() {
     if (!mounted) return;
     currentPage = Container(
-      color: const Color(0xFF393939),
-      child: Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation(
-            HummingbirdColor.white,
-          ),
+      decoration: BoxDecoration(color: const Color(0xFF393939)),
+      child: SafeArea(
+        child: Flex(
+          direction: Axis.vertical,
+          children: <Widget>[
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 80.0),
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(
+                HummingbirdColor.white,
+              ),
+            ),
+            Container(
+              height: 100.0,
+            ),
+          ],
         ),
       ),
     );
@@ -66,6 +87,7 @@ class _MainState extends State<Main> {
   }
 
   Future<void> _initialize() async {
+    await Future.delayed(const Duration(seconds: 2));
     applicationState = ApplicationState();
     WidgetsFlutterBinding.ensureInitialized();
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
