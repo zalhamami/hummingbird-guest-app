@@ -1,6 +1,8 @@
 class WeddingStatistic {
   int allGuests, attendedGuests, scannedGuests;
 
+  int get notYetPresentGuests => attendedGuests - scannedGuests;
+
   WeddingStatistic({
     this.allGuests,
     this.attendedGuests,
