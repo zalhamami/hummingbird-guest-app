@@ -104,6 +104,7 @@ class _GuestListState extends State<GuestList> {
       _title,
       style: TextStyle(
         color: HummingbirdColor.orange,
+        fontSize: 20.0,
       ),
     );
   }
@@ -129,9 +130,12 @@ class _GuestListState extends State<GuestList> {
       controller: _searchQueryController,
       autofocus: true,
       decoration: InputDecoration(
-        hintText: "Masukkan nama tamu...",
+        hintText: "Ketik nama tamu",
         border: InputBorder.none,
-        hintStyle: TextStyle(color: Colors.white30),
+        hintStyle: TextStyle(
+          color: Colors.white30,
+          fontSize: 18.0,
+        ),
       ),
       style: TextStyle(
         color: HummingbirdColor.white,
@@ -194,7 +198,10 @@ class _GuestListState extends State<GuestList> {
             borderRadius: BorderRadius.circular(25.0),
             color: HummingbirdColor.grey,
           ),
-          child: Text('Filter'),
+          child: Text(
+            'Filter',
+            style: TextStyle(fontSize: 16.0),
+          ),
         ),
       ),
     );
@@ -218,7 +225,7 @@ class _GuestListState extends State<GuestList> {
     final backgroundColor =
         guest.scanStatus ? HummingbirdColor.orange : HummingbirdColor.grey;
 
-    final String present = guest.scanStatus ? 'Hadir' : ' Belum Hadir';
+    final String present = guest.scanStatus ? 'Hadir' : 'Belum Hadir';
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -242,7 +249,7 @@ class _GuestListState extends State<GuestList> {
                 Text(
                   guest.name,
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 16.0,
                     color: HummingbirdColor.orange,
                   ),
                 ),
@@ -268,6 +275,7 @@ class _GuestListState extends State<GuestList> {
             ),
             child: Text(
               present,
+              style: TextStyle(fontSize: 12.0),
             ),
           ),
         ],

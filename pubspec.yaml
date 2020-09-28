@@ -66,14 +66,49 @@ flutter:
         - asset: assets/fonts/Hummingbird-Icon.ttf
     - family: Raleway
       fonts:
-        - asset: assets/fonts/Raleway/Raleway-Regular.ttf
+        - asset: assets/fonts/Raleway/Raleway-Black.ttf
+          weight: 900
         - asset: assets/fonts/Raleway/Raleway-ExtraBold.ttf
           weight: 800
         - asset: assets/fonts/Raleway/Raleway-Bold.ttf
           weight: 700
         - asset: assets/fonts/Raleway/Raleway-SemiBold.ttf
           weight: 600
+        - asset: assets/fonts/Raleway/Raleway-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Raleway/Raleway-Regular.ttf
+          weight: 400
         - asset: assets/fonts/Raleway/Raleway-Light.ttf
           weight: 300
+        - asset: assets/fonts/Raleway/Raleway-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/Raleway/Raleway-Thin.ttf
+          weight: 100
+
+        - asset: assets/fonts/Raleway/Raleway-BlackItalic.ttf
+          weight: 900
+          style: italic
+        - asset: assets/fonts/Raleway/Raleway-ExtraBoldItalic.ttf
+          weight: 800
+          style: italic
+        - asset: assets/fonts/Raleway/Raleway-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/Raleway/Raleway-SemiBoldItalic.ttf
+          weight: 600
+          style: italic
+        - asset: assets/fonts/Raleway/Raleway-MediumItalic.ttf
+          weight: 500
+          style: italic
         - asset: assets/fonts/Raleway/Raleway-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/Raleway/Raleway-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/Raleway/Raleway-ExtraLightItalic.ttf
+          weight: 200
+          style: italic
+        - asset: assets/fonts/Raleway/Raleway-ThinItalic.ttf
+          weight: 100
           style: italic

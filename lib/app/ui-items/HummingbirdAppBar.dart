@@ -25,9 +25,7 @@ class HummingbirdAppBar extends AppBar {
           ),
           title: Text(
             label,
-            style: TextStyle(
-              color: HummingbirdColor.orange,
-            ),
+            style: TextStyle(color: HummingbirdColor.orange, fontSize: 20.0),
           ),
         );
 }

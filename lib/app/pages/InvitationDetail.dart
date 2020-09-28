@@ -126,7 +126,7 @@ class _InvitationDetailState extends State<InvitationDetail> {
           Text(
             item.title,
             style: TextStyle(
-              fontSize: 18.0,
+              fontSize: 16.0,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -137,6 +137,9 @@ class _InvitationDetailState extends State<InvitationDetail> {
           ),
           Text(
             '${item.description ?? '0'} orang',
+            style: TextStyle(
+              fontSize: 16.0,
+            ),
           ),
         ],
       ),
@@ -199,14 +202,19 @@ class _InvitationDetailState extends State<InvitationDetail> {
       Text(
         widget.wedding.featureTitle,
         style: TextStyle(
-          fontSize: 18.0,
+          fontSize: 20.0,
           fontWeight: FontWeight.w700,
         ),
       ),
       Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
       ),
-      Text('Wedding Code: ${widget.wedding.code}'),
+      Text(
+        'Wedding Code: ${widget.wedding.code}',
+        style: TextStyle(
+          fontSize: 16.0,
+        ),
+      ),
     ];
   }
 }

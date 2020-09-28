@@ -62,6 +62,9 @@ class _MainPageState extends State<MainPage> {
                     ),
                     Text(
                       'Wedding Code adalah kode unik yang dimiliki setiap undangan pernikahan',
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 25.0),
@@ -141,6 +144,7 @@ class _MainPageState extends State<MainPage> {
               label,
               style: TextStyle(
                 color: HummingbirdColor.white,
+                fontSize: 16.0,
               ),
             ),
     );
@@ -154,9 +158,7 @@ class _MainPageState extends State<MainPage> {
       },
       child: Text(
         'Lihat Wedding Code',
-        style: TextStyle(
-          decoration: TextDecoration.underline,
-        ),
+        style: TextStyle(decoration: TextDecoration.underline, fontSize: 12.0),
       ),
     );
   }
@@ -215,7 +217,7 @@ class _MainPageState extends State<MainPage> {
         style: TextStyle(
           color: HummingbirdColor.orange,
           fontWeight: FontWeight.w300,
-          fontSize: 32.0,
+          fontSize: 25.0,
         ),
       ),
     );

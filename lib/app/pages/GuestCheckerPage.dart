@@ -11,6 +11,7 @@ import 'package:hummingbird_guest_apps/app/pages/InvitationDetail.dart';
 import 'package:hummingbird_guest_apps/app/pages/MainPage.dart';
 import 'package:hummingbird_guest_apps/app/pages/PhotoViewer.dart';
 import 'package:hummingbird_guest_apps/app/services/Service.dart';
+import 'package:hummingbird_guest_apps/app/states/application/ApplicationStateProvider.dart';
 import 'package:hummingbird_guest_apps/app/ui-items/HummingbirdColor.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -259,7 +260,15 @@ class _GuestCheckerPageState extends State<GuestCheckerPage> {
 
     Guest guest;
     try {
-      guest = await Service.scanQR(json.decode(barcode));
+      final qrResult = json.decode(barcode);
+
+      if (qrResult != null && qrResult.containsKey('wedding_code')) {
+        final qrWeddingCode = qrResult['wedding_code'];
+        final currentWedding = ApplicationStateProvider.of(context).wedding;
+
+        if (currentWedding != null && currentWedding.code == qrWeddingCode)
+          guest = await Service.scanQR(qrResult);
+      }
     } catch (_) {}
 
     await Navigator.of(context).push(
@@ -296,7 +305,7 @@ class _GuestCheckerPageState extends State<GuestCheckerPage> {
                   style: TextStyle(
                     color: HummingbirdColor.orange,
                     fontWeight: FontWeight.w400,
-                    fontSize: 32.0,
+                    fontSize: 25.0,
                   ),
                 ),
                 Padding(padding: const EdgeInsets.only(bottom: 12.0)),
@@ -331,6 +340,7 @@ class _GuestCheckerPageState extends State<GuestCheckerPage> {
           item.label,
           style: TextStyle(
             color: HummingbirdColor.white,
+            fontSize: 16.0,
           ),
         ),
       ),
@@ -382,7 +392,7 @@ class _GuestCheckerPageState extends State<GuestCheckerPage> {
                   widget.wedding.featureTitle,
                   style: TextStyle(
                     color: HummingbirdColor.white,
-                    fontSize: 16.0,
+                    fontSize: 18.0,
                   ),
                 ),
               ),
@@ -432,7 +442,7 @@ class _GuestCheckerPageState extends State<GuestCheckerPage> {
         style: TextStyle(
           color: HummingbirdColor.orange,
           fontWeight: FontWeight.w400,
-          fontSize: 32.0,
+          fontSize: 25.0,
         ),
       ),
       Text(

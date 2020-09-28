@@ -59,9 +59,7 @@ class GuestVerified extends StatelessWidget {
           ),
           child: Text(
             guest == null ? 'Kembali' : 'Done',
-            style: TextStyle(
-              color: HummingbirdColor.white,
-            ),
+            style: TextStyle(color: HummingbirdColor.white, fontSize: 16.0),
           ),
         ),
       ],
@@ -74,7 +72,12 @@ class GuestVerified extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 16.0,
+            ),
+          ),
           Padding(padding: const EdgeInsets.only(bottom: 8.0)),
           Row(
             children: [
@@ -89,6 +92,7 @@ class GuestVerified extends StatelessWidget {
                     value,
                     style: TextStyle(
                       color: HummingbirdColor.grey,
+                      fontSize: 16.0,
                     ),
                     textAlign: TextAlign.start,
                   ),
@@ -118,14 +122,17 @@ class GuestVerified extends StatelessWidget {
         'Guest Verified',
         style: TextStyle(
           color: HummingbirdColor.orange,
-          fontSize: 28.0,
+          fontSize: 25.0,
           fontWeight: FontWeight.w400,
         ),
       ),
       Padding(padding: const EdgeInsets.only(bottom: 5.0)),
       Text(
         'Tamu terdaftar di undangan.',
-        style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w300),
+        style: TextStyle(
+          fontSize: 16.0,
+          fontWeight: FontWeight.w300,
+        ),
       ),
       Padding(padding: const EdgeInsets.symmetric(vertical: 35.0)),
       _buildResultItem('Nama Lengkap', guest.name),
