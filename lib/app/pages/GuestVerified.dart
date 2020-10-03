@@ -21,8 +21,9 @@ class GuestVerified extends StatelessWidget {
             overScroll.disallowGlow();
             return;
           },
-          child: DefaultTextStyle(
+          child: DefaultTextStyle.merge(
             style: TextStyle(
+              fontFamily: 'Raleway',
               color: HummingbirdColor.white,
             ),
             textAlign: TextAlign.center,
@@ -76,6 +77,7 @@ class GuestVerified extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 16.0,
+              fontWeight: FontWeight.w600,
             ),
           ),
           Padding(padding: const EdgeInsets.only(bottom: 8.0)),
@@ -123,7 +125,6 @@ class GuestVerified extends StatelessWidget {
         style: TextStyle(
           color: HummingbirdColor.orange,
           fontSize: 25.0,
-          fontWeight: FontWeight.w400,
         ),
       ),
       Padding(padding: const EdgeInsets.only(bottom: 5.0)),
@@ -131,7 +132,6 @@ class GuestVerified extends StatelessWidget {
         'Tamu terdaftar di undangan.',
         style: TextStyle(
           fontSize: 16.0,
-          fontWeight: FontWeight.w300,
         ),
       ),
       Padding(padding: const EdgeInsets.symmetric(vertical: 35.0)),

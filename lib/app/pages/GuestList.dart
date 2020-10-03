@@ -6,7 +6,6 @@ import 'package:hummingbird_guest_apps/app/models/Category.dart';
 import 'package:hummingbird_guest_apps/app/models/Guest.dart';
 import 'package:hummingbird_guest_apps/app/models/Wedding.dart';
 import 'package:hummingbird_guest_apps/app/services/Service.dart';
-import 'package:hummingbird_guest_apps/app/ui-items/HummingbirdAppBar.dart';
 import 'package:hummingbird_guest_apps/app/ui-items/HummingbirdColor.dart';
 import 'package:pagination/pagination.dart';
 
@@ -64,9 +63,10 @@ class _GuestListState extends State<GuestList> {
             overScroll.disallowGlow();
             return;
           },
-          child: DefaultTextStyle(
+          child: DefaultTextStyle.merge(
             textAlign: TextAlign.center,
             style: TextStyle(
+              fontFamily: 'Raleway',
               color: HummingbirdColor.white,
             ),
             child: Center(
@@ -251,6 +251,7 @@ class _GuestListState extends State<GuestList> {
                   style: TextStyle(
                     fontSize: 16.0,
                     color: HummingbirdColor.orange,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 if (guest.category?.name != null &&
@@ -288,8 +289,9 @@ class _GuestListState extends State<GuestList> {
       context: context,
       backgroundColor: HummingbirdColor.black,
       clipBehavior: Clip.hardEdge,
-      builder: (_) => DefaultTextStyle(
+      builder: (_) => DefaultTextStyle.merge(
         style: TextStyle(
+          fontFamily: 'Raleway',
           color: HummingbirdColor.white,
         ),
         child: _buildCategoryList(),
