@@ -32,7 +32,10 @@ class GuestCheckerPage extends StatefulWidget {
 class _GuestCheckerPageState extends State<GuestCheckerPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _qrKey = GlobalKey(debugLabel: 'QR');
+  final _qrSize = 300.0;
+
   QRViewController qrController;
+  var _qrFlashOn = false;
 
   void _openEndDrawer() {
     _scaffoldKey.currentState.openEndDrawer();
@@ -48,7 +51,12 @@ class _GuestCheckerPageState extends State<GuestCheckerPage> {
 
   @override
   void initState() {
-    _menuItems.addAll([
+    _initializeMenuItems();
+    super.initState();
+  }
+
+  void _initializeMenuItems() {
+    return _menuItems.addAll([
       MenuItem(
         label: 'Detail Undangan',
         onTap: () => Navigator.of(context).push(
@@ -72,13 +80,20 @@ class _GuestCheckerPageState extends State<GuestCheckerPage> {
       MenuItem(
         label: 'Ganti Wedding Code',
         onTap: () {
-          SharedPreferences.getInstance()
-              .then((value) => value.remove('weddingCode'));
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (_) => MainPage(),
-            ),
-          );
+          _buildChangeWeddingCodeDialog().then((result) {
+            result = result == null ? false : result;
+
+            if (!result) return;
+
+            SharedPreferences.getInstance()
+                .then((value) => value.remove('weddingCode'));
+
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (_) => MainPage(),
+              ),
+            );
+          });
         },
       ),
       MenuItem(
@@ -86,112 +101,130 @@ class _GuestCheckerPageState extends State<GuestCheckerPage> {
         onTap: () {
           showModalBottomSheet(
             context: context,
-            builder: (_) => Container(
-              color: HummingbirdColor.black,
-              child: FutureBuilder<List<Contact>>(
-                future: Service.getContact(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError)
-                    return Center(child: Text('${snapshot.error}'));
-
-                  if (snapshot.hasData) {
-                    final data = snapshot.data;
-
-                    return ListView(
-                      shrinkWrap: true,
-                      children: data
-                          .map((contact) => GestureDetector(
-                                onTap: () async {
-                                  Navigator.of(context).pop();
-                                  final _url = contact.url;
-                                  if (await canLaunch(_url)) await launch(_url);
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(
-                                        width: .5,
-                                        color: HummingbirdColor.grey,
-                                      ),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 10.0,
-                                        ),
-                                        child: Icon(
-                                          contact.icon,
-                                          size: 28.0,
-                                          color: HummingbirdColor.white,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          contact.label,
-                                          style: TextStyle(
-                                            color: HummingbirdColor.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ))
-                          .toList(),
-                    );
-                  }
-
-                  return Center(child: CircularProgressIndicator());
-                },
-              ),
-            ),
+            builder: (_) => _buildHelpBottomSheet(),
           );
         },
       ),
     ]);
-    super.initState();
   }
 
-  var _qrFlashOn = false;
+  Widget _buildHelpBottomSheet() {
+    return Container(
+      color: HummingbirdColor.black,
+      child: FutureBuilder<List<Contact>>(
+        future: Service.getContact(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError)
+            return Center(child: Text('${snapshot.error}'));
+
+          if (snapshot.hasData) {
+            final data = snapshot.data;
+
+            return ListView(
+              shrinkWrap: true,
+              children: data.map((contact) => _buildHelpItem(contact)).toList(),
+            );
+          }
+
+          return Center(child: CircularProgressIndicator());
+        },
+      ),
+    );
+  }
+
+  Widget _buildHelpItem(Contact contact) {
+    return GestureDetector(
+      onTap: () async {
+        Navigator.of(context).pop();
+        final _url = contact.url;
+        if (await canLaunch(_url)) await launch(_url);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(10.0),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              width: .5,
+              color: HummingbirdColor.grey,
+            ),
+          ),
+        ),
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                right: 10.0,
+              ),
+              child: Icon(
+                contact.icon,
+                size: 28.0,
+                color: HummingbirdColor.white,
+              ),
+            ),
+            Expanded(
+              child: Text(
+                contact.label,
+                style: TextStyle(
+                  color: HummingbirdColor.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future _buildChangeWeddingCodeDialog() {
+    return showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        content: Text('Ganti wedding code?'),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('Tidak'),
+          ),
+          FlatButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text('Ya'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _handleBackButton,
-      child: SafeArea(
-        child: Scaffold(
-          key: _scaffoldKey,
-          endDrawer: _buildDrawer(),
-          body: NotificationListener<OverscrollIndicatorNotification>(
-            onNotification: (overScroll) {
-              overScroll.disallowGlow();
-              return;
-            },
-            child: DefaultTextStyle(
-              style: TextStyle(
-                color: HummingbirdColor.white,
-              ),
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                children: <Widget>[
-                  _buildUserHeader(),
-                  Padding(padding: const EdgeInsets.symmetric(vertical: 35.0)),
-                  ..._buildTitle(),
-                  _buildScanQR(),
-                  _buildAdditionalButton(),
-                ],
-              ),
+    return SafeArea(
+      child: Scaffold(
+        key: _scaffoldKey,
+        endDrawer: _buildDrawer(),
+        body: NotificationListener<OverscrollIndicatorNotification>(
+          onNotification: (overScroll) {
+            overScroll.disallowGlow();
+            return;
+          },
+          child: DefaultTextStyle.merge(
+            style: TextStyle(
+              fontFamily: 'Raleway',
+              color: HummingbirdColor.white,
+            ),
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              children: <Widget>[
+                _buildUserHeader(),
+                Padding(padding: const EdgeInsets.symmetric(vertical: 35.0)),
+                ..._buildTitle(),
+                _buildScanQR(),
+                _buildAdditionalButton(),
+              ],
             ),
           ),
         ),
       ),
     );
   }
-
-  final _qrSize = 300.0;
 
   Widget _buildScanQR() {
     return Container(
@@ -304,7 +337,6 @@ class _GuestCheckerPageState extends State<GuestCheckerPage> {
                   'Menu',
                   style: TextStyle(
                     color: HummingbirdColor.orange,
-                    fontWeight: FontWeight.w400,
                     fontSize: 25.0,
                   ),
                 ),
@@ -410,38 +442,13 @@ class _GuestCheckerPageState extends State<GuestCheckerPage> {
     );
   }
 
-  Future<bool> _handleBackButton() async {
-    if (_scaffoldKey.currentState.isEndDrawerOpen) {
-      Navigator.of(context).pop();
-      return false;
-    }
-
-    final result = await showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-              content: Text('Want to exit?'),
-              actions: <Widget>[
-                FlatButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text('No'),
-                ),
-                FlatButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text('Yes'),
-                ),
-              ],
-            ));
-
-    return result == null ? false : result;
-  }
-
   List<Widget> _buildTitle() {
     return [
       Text(
         'Guest Checker',
         style: TextStyle(
           color: HummingbirdColor.orange,
-          fontWeight: FontWeight.w400,
+          fontWeight: FontWeight.w600,
           fontSize: 25.0,
         ),
       ),
