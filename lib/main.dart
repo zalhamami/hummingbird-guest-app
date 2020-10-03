@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hummingbird_guest_apps/app/pages/GuestCheckerPage.dart';
-import 'file:///D:/Projects/Flutter/hummingbird_guest_apps/lib/app/pages/MainPage.dart';
+import 'package:hummingbird_guest_apps/app/pages/MainPage.dart';
+import 'package:hummingbird_guest_apps/app/pages/SplashScreen.dart';
 import 'package:hummingbird_guest_apps/app/states/application/ApplicationState.dart';
 import 'package:hummingbird_guest_apps/app/states/application/ApplicationStateProvider.dart';
 import 'package:hummingbird_guest_apps/app/ui-items/HummingbirdColor.dart';
@@ -25,37 +26,7 @@ class _MainState extends State<Main> {
   @override
   void initState() {
     if (!mounted) return;
-    currentPage = Container(
-      decoration: BoxDecoration(color: const Color(0xFF393939)),
-      child: SafeArea(
-        child: Flex(
-          direction: Axis.vertical,
-          children: <Widget>[
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 80.0),
-                    child: Image.asset(
-                      'assets/images/logo.png',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation(
-                HummingbirdColor.white,
-              ),
-            ),
-            Container(
-              height: 100.0,
-            ),
-          ],
-        ),
-      ),
-    );
+    currentPage = SplashScreen();
     _initialize();
     super.initState();
   }
@@ -71,6 +42,7 @@ class _MainState extends State<Main> {
         primaryTextTheme: Theme.of(context).textTheme.apply(
               bodyColor: HummingbirdColor.lightGrey,
               displayColor: HummingbirdColor.lightGrey,
+              fontFamily: 'Raleway',
             ),
         fontFamily: 'Raleway',
       ),
