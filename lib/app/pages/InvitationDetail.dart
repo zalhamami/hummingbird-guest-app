@@ -39,8 +39,9 @@ class _InvitationDetailState extends State<InvitationDetail> {
             overScroll.disallowGlow();
             return;
           },
-          child: DefaultTextStyle(
+          child: DefaultTextStyle.merge(
             style: TextStyle(
+              fontFamily: 'Raleway',
               color: HummingbirdColor.white,
             ),
             textAlign: TextAlign.center,
@@ -72,7 +73,7 @@ class _InvitationDetailState extends State<InvitationDetail> {
                             ),
                             BridegroomDetailItem(
                               'Total Tamu Datang',
-                              '${statistic.attendedGuests}',
+                              '${statistic.scannedGuests}',
                             ),
                             BridegroomDetailItem(
                               'Total Tamu Belum Datang',
@@ -130,11 +131,7 @@ class _InvitationDetailState extends State<InvitationDetail> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 5.0,
-            ),
-          ),
+          Padding(padding: const EdgeInsets.only(bottom: 5.0)),
           Text(
             '${item.description ?? '0'} orang',
             style: TextStyle(
@@ -207,10 +204,10 @@ class _InvitationDetailState extends State<InvitationDetail> {
         ),
       ),
       Padding(
-        padding: const EdgeInsets.only(bottom: 8.0),
+        padding: const EdgeInsets.only(bottom: 5.0),
       ),
-      Text(
-        'Wedding Code: ${widget.wedding.code}',
+      SelectableText(
+        widget.wedding.code,
         style: TextStyle(
           fontSize: 16.0,
         ),
