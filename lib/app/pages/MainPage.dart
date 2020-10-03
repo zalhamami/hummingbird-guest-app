@@ -1,10 +1,10 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:hummingbird_guest_apps/app/pages/GuestCheckerPage.dart';
+import 'package:hummingbird_guest_apps/app/states/application/ApplicationStateProvider.dart';
 import 'package:hummingbird_guest_apps/app/states/globals/ActionState.dart';
-import 'file:///D:/Projects/Flutter/hummingbird_guest_apps/lib/app/states/WeddingCodeState.dart';
+import 'package:hummingbird_guest_apps/app/states/WeddingCodeState.dart';
 import 'package:hummingbird_guest_apps/app/ui-items/HummingbirdColor.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,57 +22,54 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     _pageState.state.listen((event) {
       if (event is SuccessState)
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (_) => GuestCheckerPage(
-              wedding: event.value,
-            ),
-          ),
-        );
+        ApplicationStateProvider.of(context).initialize().then(
+              (value) => Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (_) => GuestCheckerPage(
+                    wedding: event.value,
+                  ),
+                ),
+              ),
+            );
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _willPopHandler,
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: Scaffold(
-          body: Center(
-            child: DefaultTextStyle(
-              style: TextStyle(
-                color: HummingbirdColor.lightGrey,
-              ),
-              textAlign: TextAlign.center,
-              child: NotificationListener<OverscrollIndicatorNotification>(
-                onNotification: (overScroll) {
-                  overScroll.disallowGlow();
-                  return;
-                },
-                child: ListView(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  children: <Widget>[
-                    _buildTitle(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 25.0),
-                      child: _buildEnterWeddingCodeField(),
-                    ),
-                    Text(
-                      'Wedding Code adalah kode unik yang dimiliki setiap undangan pernikahan',
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 25.0),
-                      child: _buildShowWeddingCodeButton(),
-                    ),
-                    _buildEnterButton(),
-                  ],
-                ),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Scaffold(
+        body: Center(
+          child: DefaultTextStyle.merge(
+            style: TextStyle(
+              fontFamily: 'Raleway',
+              color: HummingbirdColor.lightGrey,
+            ),
+            textAlign: TextAlign.center,
+            child: NotificationListener<OverscrollIndicatorNotification>(
+              onNotification: (overScroll) {
+                overScroll.disallowGlow();
+                return;
+              },
+              child: ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                children: <Widget>[
+                  _buildTitle(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 25.0),
+                    child: _buildEnterWeddingCodeField(),
+                  ),
+                  Text(
+                    'Wedding Code adalah kode unik yang dimiliki setiap undangan pernikahan',
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 15.0),
+                    child: _buildShowWeddingCodeButton(),
+                  ),
+                  _buildEnterButton(),
+                ],
               ),
             ),
           ),
@@ -193,7 +190,7 @@ class _MainPageState extends State<MainPage> {
     var weddingCode = _textEditingController.text.toUpperCase();
 
     if (!isNumeric(weddingCode)) {
-      if (weddingCode.contains('WED')) {
+      if (weddingCode.toUpperCase().contains('WED')) {
         if (weddingCode.contains('-'))
           weddingCode = weddingCode.split('-')[1];
         else
@@ -216,30 +213,10 @@ class _MainPageState extends State<MainPage> {
         'Wedding Code',
         style: TextStyle(
           color: HummingbirdColor.orange,
-          fontWeight: FontWeight.w300,
+          fontWeight: FontWeight.w600,
           fontSize: 25.0,
         ),
       ),
     );
-  }
-
-  Future<bool> _willPopHandler() async {
-    final result = await showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-              content: Text('Want to exit?'),
-              actions: <Widget>[
-                FlatButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text('No'),
-                ),
-                FlatButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text('Yes'),
-                ),
-              ],
-            ));
-
-    return result == null ? false : result;
   }
 }
