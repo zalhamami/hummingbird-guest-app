@@ -86,6 +86,12 @@ class Service<T> {
         'Fitur kehadiran tidak tersedia untuk kode wedding ini',
       );
 
+    if (!result.hasTransaction)
+      throw GeneralException(
+        '',
+        'Wedding not found',
+      );
+
     return result;
   }
 

@@ -8,6 +8,7 @@ class Wedding {
   Photo featureImage;
 
   bool hasAttendance = false;
+  bool hasTransaction = false;
 
   String get featureTitle {
     String _groom, _bride = '';
@@ -34,6 +35,7 @@ class Wedding {
     this.bride,
     this.featureImage,
     this.hasAttendance,
+    this.hasTransaction,
   });
 
   Wedding.fromResponse(Map<String, dynamic> response) {
@@ -62,6 +64,26 @@ class Wedding {
               _featureName.trim().toLowerCase() == 'attendance') {
             hasAttendance = true;
             break;
+          }
+        }
+      }
+    }
+
+    if (response.containsKey('transaction') &&
+        response['transaction'] != null) {
+      final Map transaction = response['transaction'];
+
+      if (transaction.containsKey('status') && transaction['status'] != null) {
+        final Map transactionStatus = transaction['status'];
+
+        if (transactionStatus.containsKey('status') &&
+            transactionStatus['status'] != null) {
+          String status = (transactionStatus['status'] as String).trim();
+
+          if (status.isNotEmpty) {
+            status = status.toLowerCase();
+
+            if (status == 'approved') hasTransaction = true;
           }
         }
       }
