@@ -420,11 +420,20 @@ class _GuestCheckerPageState extends State<GuestCheckerPage> {
                 ),
               ),
               Expanded(
-                child: Text(
-                  widget.wedding.featureTitle,
-                  style: TextStyle(
-                    color: HummingbirdColor.white,
-                    fontSize: 18.0,
+                child: InkWell(
+                  child: Text(
+                    widget.wedding.featureTitle,
+                    style: TextStyle(
+                      color: HummingbirdColor.white,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => InvitationDetail(
+                        wedding: widget.wedding,
+                      ),
+                    ),
                   ),
                 ),
               ),
