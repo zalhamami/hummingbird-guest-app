@@ -46,9 +46,7 @@ class _MainState extends State<Main> {
             ),
         fontFamily: 'Raleway',
       ),
-      home: SafeArea(
-        child: currentPage,
-      ),
+      home: currentPage,
     );
 
     if (applicationState == null) return app;
@@ -59,7 +57,7 @@ class _MainState extends State<Main> {
   }
 
   Future<void> _initialize() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     applicationState = ApplicationState();
     WidgetsFlutterBinding.ensureInitialized();
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
