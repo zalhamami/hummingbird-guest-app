@@ -74,10 +74,12 @@ class _InvitationDetailState extends State<InvitationDetail> {
                             BridegroomDetailItem(
                               'Total Tamu Datang',
                               '${statistic.scannedGuests}',
+                              page: GuestList(wedding: widget.wedding),
                             ),
                             BridegroomDetailItem(
                               'Total Tamu Belum Datang',
                               '${statistic.notYetPresentGuests}',
+                              page: GuestList(wedding: widget.wedding),
                             ),
                           ];
 
