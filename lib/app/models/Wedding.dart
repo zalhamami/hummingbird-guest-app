@@ -4,19 +4,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Wedding {
   int id;
-  String code, groom, bride;
+  String code, firstPerson, secondPerson;
   Photo featureImage;
 
   bool hasAttendance = false;
   bool hasTransaction = false;
 
   String get featureTitle {
-    String _groom, _bride = '';
+    String _firstPerson, _secondPerson = '';
 
-    _groom = getFirstName(groom);
-    _bride = getFirstName(bride);
+    _firstPerson = getFirstName(firstPerson);
+    _secondPerson = getFirstName(secondPerson);
 
-    return '$_groom & $_bride';
+    return '$_firstPerson & $_secondPerson';
   }
 
   static String getFirstName(String value) {
@@ -31,8 +31,8 @@ class Wedding {
   Wedding({
     this.id,
     this.code,
-    this.groom,
-    this.bride,
+    this.firstPerson,
+    this.secondPerson,
     this.featureImage,
     this.hasAttendance,
     this.hasTransaction,
@@ -43,12 +43,12 @@ class Wedding {
 
     if (response.containsKey('code')) code = response['code'];
 
-    Map<String, dynamic> _groom = response['groom'],
-        _bride = response['bride'],
-        _featureImage = response['featured_image'];
+    Map<String, dynamic> _featureImage = response['featured_image'];
 
-    groom = _groom['name'];
-    bride = _bride['name'];
+    List<dynamic> _couple = response['couple'];
+
+    firstPerson = _couple[0]['nickname'];
+    secondPerson = _couple[1]['nickname'];
     featureImage = Photo(
       type: PhotoType.Network,
       path: _featureImage['url'],
