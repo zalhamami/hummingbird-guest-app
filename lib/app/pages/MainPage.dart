@@ -150,7 +150,7 @@ class _MainPageState extends State<MainPage> {
   Widget _buildShowWeddingCodeButton() {
     return GestureDetector(
       onTap: () async {
-        final _url = 'https://hummingbird.id/undanganku';
+        final _url = 'https://hummingbird.id/user/undangan';
         if (await canLaunch(_url)) await launch(_url);
       },
       child: Text(
